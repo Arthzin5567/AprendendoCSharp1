@@ -15,18 +15,33 @@ public class Pessoa
         set { idade = value; }
     }
 
-    public void cadastro()
+    public Pessoa cadastro()
     {
+        Pessoa novaPessoa = new Pessoa(); // Cria uma nova instância de Pessoa
+
         System.Console.WriteLine("Digite o nome:");
-        this.nome = Console.ReadLine();
+        novaPessoa.nome = Console.ReadLine();
 
         System.Console.WriteLine("Digite a idade:");
-        this.idade = int.Parse(Console.ReadLine());
+        novaPessoa.idade = int.Parse(Console.ReadLine());
+
+        return novaPessoa; // Retorna a nova instância (embora não esteja sendo usada no momento) 
     }
 
-    public string toString()
+    public Pessoa editar()
     {
-        return "Nome: " + this.nome + "\nIdade: " + this.idade;
+        System.Console.WriteLine("Digite o novo nome:");
+        this.nome = Console.ReadLine();
+
+        System.Console.WriteLine("Digite a nova idade:");
+        this.idade = int.Parse(Console.ReadLine());
+
+        return this; // Retorna a instância atualizada
+    }
+
+    public string ToString()
+    {
+        return "\nNome: " + this.nome + "\nIdade: " + this.idade;
     }
 
 }
