@@ -17,6 +17,9 @@ public class Program
             System.Console.WriteLine("Digite 2 para listar todas as pessoas cadastradas.");
             System.Console.WriteLine("Digite 3 para editar uma pessoa cadastrada.");
             System.Console.WriteLine("Digite 4 para excluir uma pessoa cadastrada.");
+            System.Console.WriteLine("Digite 5 para gerar arquivo CSV da lista.");
+            System.Console.WriteLine("Digite 6 para carregar arquivo CSV da lista no console.");
+            System.Console.WriteLine("---------------------------------------------------------------");
             System.Console.WriteLine("Digite n para sair.");
 
             opcao = System.Convert.ToInt32(Console.ReadLine());
@@ -41,6 +44,9 @@ public class Program
 
                 listarPessoas();
 
+                // Atualiza arquivo CSV após cadastro
+                gerarArquivoCSV();
+
                 opcao = 0;
 
                 System.Console.WriteLine("Deseja continuar? (s/n)");
@@ -48,7 +54,11 @@ public class Program
             } else if (opcao == 3)
             {
                 System.Console.WriteLine("------------------- EDIÇÃO DE PESSOA -----------------------------------");
+
                 editarPessoa();
+
+                // Atualiza arquivo CSV após edição
+                gerarArquivoCSV();
 
                 opcao = 0;
 
@@ -61,11 +71,66 @@ public class Program
                 
                 excluirPessoa();
 
+                // Atualiza arquivo CSV após exclusão
+                gerarArquivoCSV();
+
                 opcao = 0;
 
                 System.Console.WriteLine("Deseja continuar? (s/n)");
                 resposta = System.Console.ReadLine().ToLower();
-            }
+            } 
+            else if (opcao == 5)
+            {
+                System.Console.WriteLine("------------------- GERAÇÃO DE ARQUIVO CSV ------------------------------");
+
+                gerarArquivoCSV();
+
+                opcao = 0;
+
+                System.Console.WriteLine("Deseja continuar? (s/n)");
+                resposta = System.Console.ReadLine().ToLower();
+            } 
+            else if (opcao == 6)
+            {
+                System.Console.WriteLine("------------------- CARREGAMENTO DE ARQUIVO CSV -------------------------");
+
+                verificarPastaData();
+
+                string caminhoArquivo = "data/pessoas.csv";
+
+                if (File.Exists(caminhoArquivo))
+                {
+                    using (StreamReader sr = new StreamReader(caminhoArquivo))
+                    {
+                        string linha;
+                        bool primeiraLinha = true;
+
+                        while ((linha = sr.ReadLine()) != null)
+                        {
+                            if (primeiraLinha)
+                            {
+                                primeiraLinha = false;
+                                continue; // Pula o cabeçalho
+                            }
+
+                            string[] dados = linha.Split(',');
+                            System.Console.WriteLine($"Nome: {dados[0]}, Idade: {dados[1]}");
+                        }
+                    }
+                }
+                else
+                {
+                    System.Console.WriteLine("Arquivo CSV não encontrado.");
+                }
+
+                opcao = 0;
+
+                System.Console.WriteLine("Deseja continuar? (s/n)");
+                resposta = System.Console.ReadLine().ToLower();
+            } 
+             else
+            
+
 
             if (resposta == "n")
             {
@@ -123,5 +188,35 @@ public class Program
         listaPessoas.RemoveAt(index);
 
         System.Console.WriteLine("Pessoa excluída com sucesso!");
+    }
+
+    public static void verificarPastaData()
+    {
+        // Cria a pasta "data" se ela não existir
+        string pastaData = "data";
+
+        if (!Directory.Exists(pastaData))
+        {
+            Directory.CreateDirectory(pastaData);
+        }
+    }
+
+    public static void gerarArquivoCSV()
+    {
+        verificarPastaData();
+
+        string caminhoArquivo = "data/pessoas.csv";
+
+        using (StreamWriter sw = new StreamWriter(caminhoArquivo))
+        {
+            sw.WriteLine("Nome,Idade");
+
+            foreach (Pessoa p in listaPessoas)
+            {
+                sw.WriteLine($"{p.Nome},{p.Idade}");
+            }
+        }
+
+        System.Console.WriteLine($"Arquivo CSV gerado com sucesso em: {caminhoArquivo}");
     }
 }
